@@ -11,6 +11,7 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.builder.text
 import de.achimonline.ansible_lint.bundle.AnsibleLintBundle.message
 import de.achimonline.ansible_lint.command.AnsibleLintCommandLine
 import de.achimonline.ansible_lint.command.file.AnsibleLintCommandFileConfig
@@ -43,6 +44,12 @@ class AnsibleLintConfigurable : BoundConfigurable(message("settings.display.name
                     testButton = button(message("settings.group.executable.test")) {
                         executeTest()
                     }.component
+                }
+                row {
+                    textField()
+                        .label(message("settings.group.executable.path"), )
+                        .comment(message("settings.group.executable.path.comment"))
+                        .bindText(settings::path)
                 }
                 row {
                     testStatusText = comment("").component

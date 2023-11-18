@@ -1,5 +1,6 @@
 package de.achimonline.ansible_lint.command
 
+import com.google.common.base.Strings
 import com.intellij.execution.configurations.GeneralCommandLine
 import de.achimonline.ansible_lint.settings.AnsibleLintSettings
 import io.github.z4kn4fein.semver.Version
@@ -9,7 +10,7 @@ import kotlin.io.path.pathString
 
 class AnsibleLintCommandLine(private val settings: AnsibleLintSettings = AnsibleLintSettings()) {
     fun createVersionCheckProcess(workingDirectory: String): Process {
-        return GeneralCommandLine()
+        val cmd = GeneralCommandLine()
             .withEnvironment(System.getenv())
             .withWorkDirectory(workingDirectory)
             .withExePath(settings.executable)
@@ -19,7 +20,12 @@ class AnsibleLintCommandLine(private val settings: AnsibleLintSettings = Ansible
                     "--version"
                 )
             )
-            .createProcess()
+
+        if (!Strings.isNullOrEmpty(settings.path)) {
+            cmd.withEnvironment("PATH", System.getenv("PATH") + ":" + settings.path)
+        }
+
+        return cmd.createProcess()
     }
 
     fun createLintProcess(
@@ -56,12 +62,17 @@ class AnsibleLintCommandLine(private val settings: AnsibleLintSettings = Ansible
 
         parameters.add(yamlFilePath)
 
-        return GeneralCommandLine()
+        val cmd = GeneralCommandLine()
             .withEnvironment(System.getenv())
             .withWorkDirectory(workingDirectory)
             .withExePath(settings.executable)
             .withParameters(parameters)
-            .createProcess()
+
+        if (!Strings.isNullOrEmpty(settings.path)) {
+            cmd.withEnvironment("PATH", System.getenv("PATH") + ":" + settings.path)
+        }
+
+        return cmd.createProcess()
     }
 
     companion object {
